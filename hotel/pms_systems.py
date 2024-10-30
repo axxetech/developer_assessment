@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import inspect
 import sys
 
-from typing import Optional
+from typing import Optional, Type
 
 from hotel.external_api import (
     get_reservations_for_given_checkin_date,
@@ -19,8 +19,10 @@ class PMS(ABC):
     Abstract class for Property Management Systems.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, hotel: Hotel):
+        assert hotel is not None
+
+        self.hotel = hotel
 
     @property
     def name(self):
@@ -28,7 +30,7 @@ class PMS(ABC):
         return longname[4:]
 
     @abstractmethod
-    def clean_webhook_payload(self, payload: str) -> dict:
+    def clean_webhook_payload(self, payload: str) -> Optional[dict]:
         """
         Clean the json payload and return a usable object.
         Make sure the payload contains all the needed information to handle it properly
@@ -51,18 +53,6 @@ class PMS(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def update_tomorrows_stays(self) -> bool:
-        """
-        This method is called every day at 00:00 to update the stays with a checkin date tomorrow.
-        Requirements:
-            - Get all stays checking in tomorrow by calling the mock API endpoint get_reservations_for_given_checkin_date.
-            - Update or create the Stays.
-            - Update or create Guest details. Deal with missing and incomplete data yourself
-                as you see fit. Deal with the Language yourself. country != language.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
     def stay_has_breakfast(self, stay: Stay) -> Optional[bool]:
         """
         This method is called when we want to know if the stay includes breakfast.
@@ -72,25 +62,18 @@ class PMS(ABC):
         raise NotImplementedError
 
 
-class PMS_Mews(PMS):
-    def clean_webhook_payload(self, payload: str) -> dict:
-        # TODO: Implement the method
-        return {}
-
+class PMS_Apaleo(PMS):
     def handle_webhook(self, webhook_data: dict) -> bool:
-        # TODO: Implement the method
-        return True
+        return False
 
-    def update_tomorrows_stays(self) -> bool:
-        # TODO: Implement the method
-        return True
+    def clean_webhook_payload(self, payload: str) -> Optional[dict]:
+        return None
 
     def stay_has_breakfast(self, stay: Stay) -> Optional[bool]:
-        # TODO: Implement the method
         return None
 
 
-def get_pms(name):
+def get_pms(name: str, hotel: Hotel) -> Type[PMS]:
     fullname = "PMS_" + name.capitalize()
     # find all class names in this module
     # from https://stackoverflow.com/questions/1796180/
@@ -98,4 +81,7 @@ def get_pms(name):
     clsnames = [x[0] for x in inspect.getmembers(current_module, inspect.isclass)]
 
     # if we have a PMS class for the given name, return an instance of it
-    return getattr(current_module, fullname)() if fullname in clsnames else False
+    if fullname in clsnames:
+        return getattr(current_module, fullname)(hotel)
+    else:
+        raise ValueError(f"No PMS class found for {name}")

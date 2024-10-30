@@ -14,14 +14,21 @@ class Language(models.TextChoices):
 
 
 class Hotel(models.Model):
+    class PMS(models.TextChoices):
+        APALEO = "Apaleo", "Apaleo PMS"
+
     name = models.CharField(max_length=200)
     city = models.CharField(max_length=200, blank=False, null=False)
+    pms = models.CharField(choices=PMS.choices, max_length=50, blank=True, null=True)
     pms_hotel_id = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.city} - {self.name}"
+
+    def get_pms(self):
+        return pms_systems.get_pms(self.pms, self) if self.pms else None
 
 
 class Guest(models.Model):
@@ -34,9 +41,7 @@ class Guest(models.Model):
         max_length=200,
         unique=True,
     )
-    language = models.CharField(
-        max_length=5, choices=Language.choices, blank=True, null=True
-    )
+    language = models.CharField(max_length=5, choices=Language.choices, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -56,9 +61,7 @@ class Stay(models.Model):
         UNKNOWN = "unknown", "The status is unknown"
 
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name="stays")
-    guest = models.ForeignKey(
-        Guest, on_delete=models.CASCADE, related_name="stays", blank=True, null=True
-    )
+    guest = models.ForeignKey(Guest, on_delete=models.CASCADE, related_name="stays", blank=True, null=True)
     pms_reservation_id = models.CharField(
         max_length=200,
         blank=True,
@@ -73,9 +76,7 @@ class Stay(models.Model):
         This is intended to be on Stay level, as the same person (phone) can stay in
         multiple hotels with different guest IDs.""",
     )
-    status = models.CharField(
-        choices=Status.choices, default=Status.UNKNOWN, max_length=50
-    )
+    status = models.CharField(choices=Status.choices, default=Status.UNKNOWN, max_length=50)
     checkin = models.DateField(blank=True, null=True)
     checkout = models.DateField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -83,3 +84,6 @@ class Stay(models.Model):
 
     class Meta:
         unique_together = ("hotel", "pms_reservation_id")
+
+
+from . import pms_systems  # noqa: E402
