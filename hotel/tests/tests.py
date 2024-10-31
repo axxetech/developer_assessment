@@ -1,9 +1,9 @@
 import django.test
 
-from hotel.models import Stay, Hotel
+from hotel.models import Stay, Hotel, Guest
 
 from hotel.tests import load_api_fixture
-from hotel.tests.factories import HotelFactory, StayFactory
+from hotel.tests.factories import HotelFactory
 
 
 class PMS_Apaleotest(django.test.TestCase):
@@ -28,13 +28,5 @@ class PMS_Apaleotest(django.test.TestCase):
         self.assertTrue(success)
         stays = Stay.objects.filter(hotel=self.hotel)
         self.assertEqual(stays.count(), 3)
-
-    def test_stay_has_breakfast(self):
-        stay = StayFactory(hotel=self.hotel)
-        self.assertIsNone(self.pms.stay_has_breakfast(stay))
-
-        stay.pms_reservation_id = "7c22cb23-c517-48f9-a5d4-da811043bd67"
-        stay.save()
-
-        # Breakfast is either included or excluded, can be False or True
-        self.assertIn(self.pms.stay_has_breakfast(stay), [False, True])
+        guests = Guest.objects.all()
+        self.assertEqual(guests.count(), 3)

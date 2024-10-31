@@ -37,7 +37,7 @@ def get_reservations_for_given_checkin_date(checkin_date: str) -> str:
 
     # This API call can fail randomly, just to simulate a real API.
     if random.randint(0, 10) == 0:
-        raise APIError("The API is not available.")
+        raise APIError("The API is temporarily not available. Please try again.")
 
     return json.dumps(
         [
@@ -67,7 +67,7 @@ def get_reservation_details(reservation_id: str) -> str:
 
     # This API call can fail randomly, just to simulate a real API.
     if random.randint(0, 10) == 0:
-        raise APIError("The API is not available.")
+        raise APIError("The API is temporarily not available. Please try again.")
 
     return json.dumps(
         {
@@ -95,7 +95,7 @@ def get_guest_details(guest_id: str) -> str:
 
     # This API call can fail randomly, just to simulate a real API.
     if random.randint(0, 10) == 0:
-        raise APIError("The API is not available.")
+        raise APIError("The API is temporarily not available. Please try again.")
 
     countries = ["NL", "DE", "GG", "GB", "", "CA", "BR", "CN", None, "AU"]
     names = [

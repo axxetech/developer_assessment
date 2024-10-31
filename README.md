@@ -18,7 +18,7 @@ This repository contains working Django code. Run your code locally, you don't n
 
 ## TODO
 - Fork the repo into your own Github account. Make the fork public.
-- Implement the following methods for the child class `PMS_Apaleo` in the file `pms_systems.py`: `clean_webhook_payload`, `handle_webhook`, `stay_has_breakfast`.
+- Implement the following methods for the child class `PMS_Apaleo` in the file `pms_systems.py`: `clean_webhook_payload`, `handle_webhook`.
 - Webhook calls should use the `clean_webhook_payload`, `handle_webhook` methods. You can test the webhook functionality by making a POST request to the url: `http://localhost:8000/webhook/apaleo/` with the payload:
 ```
 {

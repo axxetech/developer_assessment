@@ -57,15 +57,6 @@ class PMS(ABC):
         """
         raise NotImplementedError
 
-    @abstractmethod
-    def stay_has_breakfast(self, stay: Stay) -> Optional[bool]:
-        """
-        This method is called when we want to know if the stay includes breakfast.
-        Notice that the breakfast data is not stored in any of the models, we always want real time data.
-        - Return True if the stay includes breakfast, otherwise False. Return None if you don't know.
-        """
-        raise NotImplementedError
-
 
 class PMS_Apaleo(PMS):
     @classmethod
@@ -74,9 +65,6 @@ class PMS_Apaleo(PMS):
 
     def handle_webhook(self, webhook_data: dict) -> bool:
         return False
-
-    def stay_has_breakfast(self, stay: Stay) -> Optional[bool]:
-        return None
 
 
 def get_pms(name: str) -> Type[PMS]:
