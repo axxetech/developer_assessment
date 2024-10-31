@@ -37,9 +37,8 @@ class PMS(ABC):
     @classmethod
     def clean_webhook_payload(cls, payload: str) -> Optional[CleanedWebhookPayload]:
         """
-        Clean the json payload and return a usable object.
-        Make sure the payload contains all the needed information to handle it properly
-        This method returns a dict and the hotel_id, or None if the payload is invalid or the hotel_id is not found.
+        This method returns a CleanedWebhookPayload object containing a hotel_id from the payload and the data as a dict in the data field
+        It should return None if the payload is invalid or the hotel is not found.
         """
         raise NotImplementedError
 
@@ -81,6 +80,11 @@ class PMS_Apaleo(PMS):
 
 
 def get_pms(name: str) -> Type[PMS]:
+    """
+    This function returns the PMS class for the given name.
+    This does not return an instance of the class, but the class itself.
+    Note, that the name should be the same as the class name without the 'PMS_' prefix.
+    """
     fullname = "PMS_" + name.capitalize()
     # find all class names in this module
     # from https://stackoverflow.com/questions/1796180/
