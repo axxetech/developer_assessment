@@ -5,8 +5,10 @@ This repository contains working Django code. Run your code locally, you don't n
 - use Python version 3.11
 - install dependencies by running: `pip install -r requirements.txt`
 
-## Run server
+## Migrate database and run server
+`python manage.py migrate`
 `python manage.py runserver 0.0.0.0:8000`
+`python manage.py test`
 
 ## Relevant information
 - The file `views.py` contains a webhook endpoint to receive updates from the PMS. These updates don't contain any details of the actual reservations. They require you to fetch additional details of any reservation.
@@ -16,8 +18,8 @@ This repository contains working Django code. Run your code locally, you don't n
 
 ## TODO
 - Fork the repo into your own Github account. Make the fork public.
-- Implement the following methods for the child class `PMS_Mews` in the file `pms_systems.py`: `clean_webhook_payload`, `handle_webhook`, `update_tomorrows_stays`, `stay_has_breakfast`.
-- Webhook calls should use the `clean_webhook_payload`, `handle_webhook` methods. You should test the webhook functionality by making Postman POST request to the url: `http://localhost:8000/webhook/mews/` with the payload:
+- Implement the following methods for the child class `PMS_Apaleo` in the file `pms_systems.py`: `clean_webhook_payload`, `handle_webhook`, `stay_has_breakfast`.
+- Webhook calls should use the `clean_webhook_payload`, `handle_webhook` methods. You can test the webhook functionality by making a POST request to the url: `http://localhost:8000/webhook/apaleo/` with the payload:
 ```
 {
     "HotelId": "851df8c8-90f2-4c4a-8e01-a4fc46b25178",
@@ -44,5 +46,3 @@ This repository contains working Django code. Run your code locally, you don't n
     ]
 }
 ```
-- imagine that the method `update_tomorrows_stays` runs every day in the evening to update the stays that will checkin tomorrow. You should test this by running a Django shell and calling the method manually. `python manage.py shell`
-- The last method `stay_has_breakfast` can be called from anywhere in the code. It should return the correct value.
