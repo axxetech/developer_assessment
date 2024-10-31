@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import inspect
 import sys
 
-from typing import Optional, Type
+from typing import Optional, Type, TypedDict
 
 from hotel.external_api import (
     get_reservations_for_given_checkin_date,
@@ -11,7 +11,12 @@ from hotel.external_api import (
     APIError,
 )
 
-from hotel.models import Stay, Guest, Hotel
+from hotel.models import Stay, Hotel
+
+
+class CleanedWebhookPayload(TypedDict):
+    hotel_id: int
+    data: dict
 
 
 class PMS(ABC):
@@ -29,11 +34,12 @@ class PMS(ABC):
         longname = self.__class__.__name__
         return longname[4:]
 
-    @abstractmethod
-    def clean_webhook_payload(self, payload: str) -> Optional[dict]:
+    @classmethod
+    def clean_webhook_payload(cls, payload: str) -> Optional[CleanedWebhookPayload]:
         """
         Clean the json payload and return a usable object.
         Make sure the payload contains all the needed information to handle it properly
+        This method returns a dict and the hotel_id, or None if the payload is invalid or the hotel_id is not found.
         """
         raise NotImplementedError
 
@@ -63,17 +69,18 @@ class PMS(ABC):
 
 
 class PMS_Apaleo(PMS):
+    @classmethod
+    def clean_webhook_payload(cls, payload: str) -> Optional[CleanedWebhookPayload]:
+        return None
+
     def handle_webhook(self, webhook_data: dict) -> bool:
         return False
-
-    def clean_webhook_payload(self, payload: str) -> Optional[dict]:
-        return None
 
     def stay_has_breakfast(self, stay: Stay) -> Optional[bool]:
         return None
 
 
-def get_pms(name: str, hotel: Hotel) -> Type[PMS]:
+def get_pms(name: str) -> Type[PMS]:
     fullname = "PMS_" + name.capitalize()
     # find all class names in this module
     # from https://stackoverflow.com/questions/1796180/
@@ -82,6 +89,6 @@ def get_pms(name: str, hotel: Hotel) -> Type[PMS]:
 
     # if we have a PMS class for the given name, return an instance of it
     if fullname in clsnames:
-        return getattr(current_module, fullname)(hotel)
+        return getattr(current_module, fullname)
     else:
         raise ValueError(f"No PMS class found for {name}")

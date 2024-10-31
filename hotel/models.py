@@ -28,7 +28,8 @@ class Hotel(models.Model):
         return f"{self.city} - {self.name}"
 
     def get_pms(self):
-        return pms_systems.get_pms(self.pms, self) if self.pms else None
+        pms_cls = pms_systems.get_pms(self.pms) if self.pms else None
+        return pms_cls(self) if pms_cls else None
 
 
 class Guest(models.Model):

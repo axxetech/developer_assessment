@@ -4,6 +4,8 @@ from django.http import HttpResponse
 
 from hotel import pms_systems
 
+from hotel.models import Hotel
+
 
 @csrf_exempt
 @require_POST
@@ -14,10 +16,14 @@ def webhook(request, pms_name):
     The body of the request should always be a valid JSON string and contain the needed information to perform an update.
     """
 
-    pms = pms_systems.get_pms(pms_name)
+    pms_cls = pms_systems.get_pms(pms_name)
 
-    payload_cleaned = pms.clean_webhook_payload(request.body)
-    success = pms.handle_webhook(payload_cleaned)
+    cleaned_webhook_payload = pms_cls.clean_webhook_payload(request.body)
+    if not cleaned_webhook_payload:
+        return HttpResponse(status=400)
+    hotel = Hotel.objects.get(id=cleaned_webhook_payload["hotel_id"])
+    pms = hotel.get_pms()
+    success = pms.handle_webhook(cleaned_webhook_payload["data"])
 
     if not success:
         return HttpResponse(status=400)
