@@ -11,6 +11,9 @@ logger = logging.getLogger(__name__)
 
 class Apaleo(PMSProvider):
 
+    def get_upsell_products(self):
+        pass
+
     @classmethod
     def clean_webhook_payload(cls, payload: str) \
             -> Optional[CleanedWebhookPayload]:

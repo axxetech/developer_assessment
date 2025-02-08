@@ -53,6 +53,13 @@ class PMSProvider(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def get_upsell_products(self):
+        """
+        This method returns a list of products that can be upsold to the guest.
+        """
+        raise NotImplementedError
+
 
 def get_pms(name: str) -> Type[PMSProvider]:
     """
