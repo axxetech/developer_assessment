@@ -3,9 +3,9 @@ import inspect
 import logging
 import pkgutil
 from abc import ABC, abstractmethod
-from typing import Optional, Type, TypedDict
+from typing import Optional, Type, TypedDict, Dict, Any, List
 
-from hotel.models import Hotel
+from hotel.models import Hotel, UpsellProduct
 
 
 class CleanedWebhookPayload(TypedDict):
@@ -53,13 +53,34 @@ class PMSProvider(ABC):
         """
         raise NotImplementedError
 
-    @abstractmethod
     def get_upsell_products(self):
         """
-        This method returns a list of products that can be upsold to the guest.
-        """
-        raise NotImplementedError
+        Template method for fetching, processing, and saving upsell products.
 
+        The workflow is:
+            1. Retrieve the raw upsell products from the PMS API.
+            2. Parse the JSON response into a list of product models.
+            3. (Optionally) Compare with the existing records and decide whether to update.
+            4. Bulk save the products into the database.
+        """
+
+        products: List[UpsellProduct] = self.retrieve_products_api()
+        saved_products = self.bulk_upsert(products)
+        return saved_products
+
+    def bulk_upsert(self, products: List["UpsellProduct"]) -> List["UpsellProduct"]:
+        """
+        Bulk update or create the products into the database.
+        """
+        return products
+
+    @abstractmethod
+    def retrieve_products_api(self) -> List[UpsellProduct]:
+        """
+        Perform the API call and return the raw JSON response.
+        Concrete classes must implement this.
+        """
+        pass
 
 def get_pms(name: str) -> Type[PMSProvider]:
     """
