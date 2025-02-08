@@ -28,8 +28,7 @@ class PMSProvider(ABC):
 
     @property
     def name(self):
-        longname = self.__class__.__name__
-        return longname[4:]
+        return self.__class__.__name__
 
     @classmethod
     def clean_webhook_payload(cls, payload: str) -> Optional[CleanedWebhookPayload]:
