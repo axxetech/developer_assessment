@@ -1,22 +1,20 @@
-from abc import ABC, abstractmethod
 import inspect
+import json
+import logging
 import sys
-
+import uuid
+from abc import ABC, abstractmethod
 from typing import Optional, Type, TypedDict
 
-from hotel.external_api import (
-    get_reservations_for_given_checkin_date,
-    get_reservation_details,
-    get_guest_details,
-    APIError,
-)
-
-from hotel.models import Stay, Hotel
+from hotel.models import Hotel
 
 
 class CleanedWebhookPayload(TypedDict):
     hotel_id: int
     data: dict
+
+
+logger = logging.getLogger(__name__)
 
 
 class PMS(ABC):
@@ -61,7 +59,36 @@ class PMS(ABC):
 class PMS_Apaleo(PMS):
     @classmethod
     def clean_webhook_payload(cls, payload: str) -> Optional[CleanedWebhookPayload]:
+        if payload is None:
+            return None
+
+        try:
+            payload_json = json.loads(payload)
+        except json.JSONDecodeError:
+            return None
+
+        pms_hotel_id: Optional[str] = payload_json.get("HotelId", None)
+        try:
+            _ = uuid.UUID(pms_hotel_id)
+        except ValueError:
+            return None
+
+        events = {}
+        for event in payload_json.get("Events", []):
+            name = event.get("Name", None)
+            reservation_id = event["Value"]["ReservationId"]
+            if name not in events:
+                events[name] = []
+            events[name].append(reservation_id)
+
+        try:
+            hotel = Hotel.objects.get(pms_hotel_id=pms_hotel_id,
+                                      pms=Hotel.PMS.APALEO)
+            return CleanedWebhookPayload(hotel_id=hotel.id, data=events)
+        except Hotel.DoesNotExist:
+            logger.error(f"Hotel with pms_hotel_id {pms_hotel_id} not found.")
         return None
+
 
     def handle_webhook(self, webhook_data: dict) -> bool:
         return False

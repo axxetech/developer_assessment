@@ -23,8 +23,7 @@ def webhook(request, pms_name):
         return HttpResponse(status=400)
     hotel = Hotel.objects.get(id=cleaned_webhook_payload["hotel_id"])
     pms = hotel.get_pms()
-    success = pms.handle_webhook(cleaned_webhook_payload["data"])
-
+    success = pms.handle_webhook(cleaned_webhook_payload)
     if not success:
         return HttpResponse(status=400)
     else:

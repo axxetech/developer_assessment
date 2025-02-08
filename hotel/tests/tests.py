@@ -22,7 +22,7 @@ class PMS_Apaleotest(django.test.TestCase):
         if not cleaned_payload:
             self.fail("No cleaned payload returned")
         else:
-            self.assertIsInstance(cleaned_payload, CleanedWebhookPayload)
+            self.assertIsInstance(cleaned_payload, dict)
             self.assertEqual(cleaned_payload["hotel_id"], self.hotel.id)
             self.assertIsInstance(cleaned_payload["data"], dict)
 
