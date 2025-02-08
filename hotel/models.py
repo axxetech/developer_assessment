@@ -87,4 +87,4 @@ class Stay(models.Model):
         unique_together = ("hotel", "pms_reservation_id")
 
 
-from . import pms_systems  # noqa: E402
+from .pms import pms_systems

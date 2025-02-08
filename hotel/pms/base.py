@@ -1,8 +1,7 @@
+import importlib
 import inspect
-import json
 import logging
-import sys
-import uuid
+import pkgutil
 from abc import ABC, abstractmethod
 from typing import Optional, Type, TypedDict
 
@@ -17,7 +16,7 @@ class CleanedWebhookPayload(TypedDict):
 logger = logging.getLogger(__name__)
 
 
-class PMS(ABC):
+class PMSProvider(ABC):
     """
     Abstract class for Property Management Systems.
     """
@@ -56,58 +55,25 @@ class PMS(ABC):
         raise NotImplementedError
 
 
-class PMS_Apaleo(PMS):
-    @classmethod
-    def clean_webhook_payload(cls, payload: str) -> Optional[CleanedWebhookPayload]:
-        if payload is None:
-            return None
-
-        try:
-            payload_json = json.loads(payload)
-        except json.JSONDecodeError:
-            return None
-
-        pms_hotel_id: Optional[str] = payload_json.get("HotelId", None)
-        try:
-            _ = uuid.UUID(pms_hotel_id)
-        except ValueError:
-            return None
-
-        events = {}
-        for event in payload_json.get("Events", []):
-            name = event.get("Name", None)
-            reservation_id = event["Value"]["ReservationId"]
-            if name not in events:
-                events[name] = []
-            events[name].append(reservation_id)
-
-        try:
-            hotel = Hotel.objects.get(pms_hotel_id=pms_hotel_id,
-                                      pms=Hotel.PMS.APALEO)
-            return CleanedWebhookPayload(hotel_id=hotel.id, data=events)
-        except Hotel.DoesNotExist:
-            logger.error(f"Hotel with pms_hotel_id {pms_hotel_id} not found.")
-        return None
-
-
-    def handle_webhook(self, webhook_data: dict) -> bool:
-        return False
-
-
-def get_pms(name: str) -> Type[PMS]:
+def get_pms(name: str) -> Type[PMSProvider]:
     """
     This function returns the PMS class for the given name.
     This does not return an instance of the class, but the class itself.
     Note, that the name should be the same as the class name without the 'PMS_' prefix.
     """
-    fullname = "PMS_" + name.capitalize()
-    # find all class names in this module
-    # from https://stackoverflow.com/questions/1796180/
-    current_module = sys.modules[__name__]
-    clsnames = [x[0] for x in inspect.getmembers(current_module, inspect.isclass)]
+    assert name.isalpha()
 
-    # if we have a PMS class for the given name, return an instance of it
-    if fullname in clsnames:
-        return getattr(current_module, fullname)
-    else:
-        raise ValueError(f"No PMS class found for {name}")
+    fullname = name.capitalize()
+    # all new task managers should be included here
+    base_module = "hotel.pms"
+
+    for finder, module_name, is_pkg in pkgutil.walk_packages(importlib.import_module(base_module).__path__, base_module + "."):
+        module = importlib.import_module(module_name)
+
+        for name, obj in inspect.getmembers(module, inspect.isclass):
+            # Check if the class matches the name and inherits from TaskManagerProvider
+            if name == fullname and issubclass(obj, PMSProvider) and obj is not PMSProvider:
+                return obj
+
+    # Raise an error if no matching class is found
+    raise ValueError(f"No such TaskManagerProvider class: {fullname}")

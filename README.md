@@ -11,14 +11,14 @@ This repository contains working Django code. Run your code locally, you don't n
 `python manage.py test`
 
 ## Relevant information
-- The file `views.py` contains a webhook endpoint to receive updates from the PMS. These updates don't contain any details of the actual reservations. They require you to fetch additional details of any reservation.
+- The file `views.py` contains a webhook endpoint to receive updates from the PMSProvider. These updates don't contain any details of the actual reservations. They require you to fetch additional details of any reservation.
 - The file `external_api.py` mocks API calls that are available to you to get additional guest and reservation details. Note that the API calls sometimes generate errors, or invalid data. You should deal with those in the way you see fit.
-- The file `pms_systems.py` contains an AbstractBaseClass and a ChildClass of a `PMS`. You will find explanations of what all the methods do inside the methods of the ABC.
+- The file `pms_systems.py` contains an AbstractBaseClass and a ChildClass of a `PMSProvider`. You will find explanations of what all the methods do inside the methods of the ABC.
 - The file `models.py` contains your database models. The models should be mostly self-explanatory. Relations are defined and some columns have `help_text`.
 
 ## TODO
 - Fork the repo into your own Github account. Make the fork public.
-- Implement the following methods for the child class `PMS_Apaleo` in the file `pms_systems.py`: `clean_webhook_payload`, `handle_webhook`.
+- Implement the following methods for the child class `Apaleo` in the file `pms_systems.py`: `clean_webhook_payload`, `handle_webhook`.
 - Webhook calls should use the `clean_webhook_payload`, `handle_webhook` methods. You can test the webhook functionality by making a POST request to the url: `http://localhost:8000/webhook/apaleo/` with the payload:
 ```
 {
