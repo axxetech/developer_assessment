@@ -4,7 +4,7 @@ import uuid
 from typing import Optional
 
 from hotel.models import Hotel
-from hotel.pms.pms_systems import CleanedWebhookPayload, PMSProvider
+from hotel.pms.base import CleanedWebhookPayload, PMSProvider
 
 logger = logging.getLogger(__name__)
 

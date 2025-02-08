@@ -28,7 +28,7 @@ class Hotel(models.Model):
         return f"{self.city} - {self.name}"
 
     def get_pms(self):
-        pms_cls = pms_systems.get_pms(self.pms) if self.pms else None
+        pms_cls = get_pms(self.pms) if self.pms else None
         return pms_cls(self) if pms_cls else None
 
 
@@ -87,4 +87,4 @@ class Stay(models.Model):
         unique_together = ("hotel", "pms_reservation_id")
 
 
-from .pms import pms_systems
+from .pms.base import get_pms

@@ -2,9 +2,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 
-from hotel.pms import pms_systems
 
 from hotel.models import Hotel
+from hotel.pms.base import get_pms
 
 
 @csrf_exempt
@@ -16,7 +16,7 @@ def webhook(request, pms_name):
     The body of the request should always be a valid JSON string and contain the needed information to perform an update.
     """
 
-    pms_cls = pms_systems.get_pms(pms_name)
+    pms_cls = get_pms(pms_name)
 
     cleaned_webhook_payload = pms_cls.clean_webhook_payload(request.body)
     if not cleaned_webhook_payload:
