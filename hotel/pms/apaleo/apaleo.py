@@ -1,9 +1,14 @@
 import json
 import logging
 import uuid
-from typing import Optional
+from typing import Optional, List
 
-from hotel.models import Hotel
+from pydantic import TypeAdapter
+from pydantic.v1 import parse_obj_as
+
+from hotel.external_api import get_apaleo_upsell_products
+from hotel.models import Hotel, UpsellProduct
+from hotel.pms.apaleo.model import ApaleoUpsellProductAdapter
 from hotel.pms.base import CleanedWebhookPayload, PMSProvider
 
 logger = logging.getLogger(__name__)
@@ -11,8 +16,15 @@ logger = logging.getLogger(__name__)
 
 class Apaleo(PMSProvider):
 
-    def get_upsell_products(self):
-        pass
+    def retrieve_products_api(self) -> Optional[List[UpsellProduct]]:
+        try:
+            data = get_apaleo_upsell_products()
+            services = data.get("services", [])
+            products = [ApaleoUpsellProductAdapter(service).to_unified() for service in services]
+            return products
+        except Exception as e:
+            logger.error(f"Failed to retrieve upsell products: {e}")
+            return None
 
     @classmethod
     def clean_webhook_payload(cls, payload: str) \
