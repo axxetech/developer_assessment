@@ -8,6 +8,9 @@ import {
   MenuItem,
   Select,
   Typography,
+  TextField,
+  Autocomplete,
+  createFilterOptions
 } from '@mui/material';
 
 const TAG_OPTIONS = ['bookable', 'breakfast', 'parking', 'late checkout', 'adult', 'teen', 'child', 'baby'];
@@ -18,7 +21,16 @@ const UpsellProductSelector = () => {
   const [upsellProducts, setUpsellProducts] = useState([]);
   const [rows, setRows] = useState([]);
 
-  const tagColors = { bookable: 'green', breakfast: 'orange',  parking: 'blue', 'late checkout': 'cyan', adult: 'purple', teen: 'pink', child: 'yellow', baby: 'brown' };
+  const tagColors = {
+    bookable: 'green',
+    breakfast: 'orange',
+    parking: 'blue',
+    'late checkout': 'cyan',
+    adult: 'purple',
+    teen: 'pink',
+    child: 'yellow',
+    baby: 'brown'
+  };
 
   // Fetch hotels when component mounts.
   useEffect(() => {
@@ -79,10 +91,19 @@ const UpsellProductSelector = () => {
       .filter((_, idx) => idx !== currentRowIndex)
       .map((row) => row.productId)
       .filter(Boolean);
-    return upsellProducts.filter(
-      (product) => !selectedProductIds.includes(product.id)
-    );
+    return upsellProducts.filter((product) => {
+      // Always include the current row's selected product (if any).
+      if (rows[currentRowIndex]?.productId === product.id) {
+        return true;
+      }
+      return !selectedProductIds.includes(product.id);
+    });
   };
+
+  // Create filter options for Autocomplete.
+  const filterOptions = createFilterOptions({
+    stringify: (option) => `${option.name} (${option.price})`,
+  });
 
   return (
     <Box sx={{ p: 4 }}>
@@ -124,24 +145,23 @@ const UpsellProductSelector = () => {
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                 <FormControl fullWidth>
-                  <InputLabel id={`upsell-select-${index}`}>
-                    Upsell Product
-                  </InputLabel>
-                  <Select
-                    labelId={`upsell-select-${index}`}
-                    value={row.productId}
-                    label="Upsell Product"
-                    onChange={(e) => handleProductChange(index, e.target.value)}
-                  >
-                    <MenuItem value="">
-                      <em>None</em>
-                    </MenuItem>
-                    {availableUpsellProducts(index).map((product) => (
-                      <MenuItem key={product.id} value={product.id}>
-                        {product.name} ({product.price})
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  <Autocomplete
+                    options={availableUpsellProducts(index)}
+                    getOptionLabel={(option) => `${option.name} (${option.price})`}
+                    filterOptions={filterOptions}
+                    onChange={(event, newValue) => {
+                      handleProductChange(index, newValue ? newValue.id : '');
+                    }}
+                    value={
+                      availableUpsellProducts(index).find(
+                        (product) => product.id === row.productId
+                      ) || null
+                    }
+                    renderInput={(params) => (
+                      <TextField {...params} label="Upsell Product" variant="outlined" />
+                    )}
+                    fullWidth
+                  />
                 </FormControl>
                 <FormControl fullWidth>
                   <InputLabel id={`tag-select-${index}`}>Tag</InputLabel>
@@ -178,6 +198,10 @@ const UpsellProductSelector = () => {
                     key={idx}
                     label={tag}
                     onDelete={() => removeTag(index, tag)}
+                    sx={{
+                      backgroundColor: 'lightgrey',
+                      color: 'grey'
+                    }}
                   />
                 ))}
               </Box>
