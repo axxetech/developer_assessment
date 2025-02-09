@@ -67,8 +67,8 @@ class PMSProvider(ABC):
         """
 
         products: List[UpsellProduct] = self.retrieve_products_api()
-        saved_products = self.bulk_upsert(products)
-        return saved_products
+        # saved_products = self.bulk_upsert(products)
+        return products
 
     def bulk_upsert(self, products: List[UpsellProduct]) -> bool:
         """

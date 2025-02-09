@@ -3,9 +3,6 @@ import logging
 import uuid
 from typing import Optional, List
 
-from pydantic import TypeAdapter
-from pydantic.v1 import parse_obj_as
-
 from hotel.external_api import get_apaleo_upsell_products
 from hotel.models import Hotel, UpsellProduct
 from hotel.pms.apaleo.model import ApaleoUpsellProductAdapter
@@ -20,7 +17,7 @@ class Apaleo(PMSProvider):
         try:
             data = get_apaleo_upsell_products()
             services = data.get("services", [])
-            products = [ApaleoUpsellProductAdapter(service).to_unified() for service in services]
+            products = [ApaleoUpsellProductAdapter(service).convert() for service in services]
             return products
         except Exception as e:
             logger.error(f"Failed to retrieve upsell products: {e}")
