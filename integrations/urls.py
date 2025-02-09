@@ -17,9 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from hotel import views
+from hotel.views import HotelsListView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("webhook/<str:pms_name>/", views.webhook, name="webhook"),
     path("api/", include("hotel.pms.urls")),
+    path('api/hotels/', HotelsListView.as_view(), name='list_hotels'),
+    path("upsell-selector/", views.upsell_selector, name="upsell_selector"),
+
 ]

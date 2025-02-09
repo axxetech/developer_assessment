@@ -1,4 +1,5 @@
 import logging
+
 from django.http import JsonResponse
 from django.views import View
 from hotel.models import Hotel
