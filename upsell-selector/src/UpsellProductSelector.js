@@ -123,7 +123,7 @@ const UpsellProductSelector = () => {
           </MenuItem>
           {hotels.map((hotel) => (
             <MenuItem key={hotel.id} value={hotel.id}>
-              {hotel.name} - {hotel.city} ({hotel.pms})
+              {hotel.name} - {hotel.city}
             </MenuItem>
           ))}
         </Select>
