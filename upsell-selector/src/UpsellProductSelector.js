@@ -20,16 +20,18 @@ const UpsellProductSelector = () => {
   const [selectedHotelId, setSelectedHotelId] = useState('');
   const [upsellProducts, setUpsellProducts] = useState([]);
   const [rows, setRows] = useState([]);
+  // Temporary cache keyed by hotel ID
+  const [savedRows, setSavedRows] = useState({});
 
   const tagColors = {
-    bookable: 'green',
-    breakfast: 'orange',
-    parking: 'blue',
-    'late checkout': 'cyan',
-    adult: 'purple',
-    teen: 'pink',
-    child: 'yellow',
-    baby: 'brown'
+    bookable: 'lightgreen',
+    breakfast: 'lightgrey',
+    parking: 'lightgrey',
+    'late checkout': 'lightgrey',
+    adult: 'lightgrey',
+    teen: 'lightgrey',
+    child: 'lightgrey',
+    baby: 'lightgrey'
   };
 
   // Fetch hotels when component mounts.
@@ -49,11 +51,27 @@ const UpsellProductSelector = () => {
         .then((res) => res.json())
         .then((data) => {
           setUpsellProducts(data.upsell_products || []);
-          setRows([]); // Reset rows when hotel changes.
+          // Do not reset rows here—rows are managed by handleHotelChange.
         })
         .catch((error) => console.error('Error fetching upsell products:', error));
     }
   }, [selectedHotelId]);
+
+  // Handle hotel change: store current rows, update selected hotel, and restore saved rows if available.
+  const handleHotelChange = (e) => {
+    const newHotelId = e.target.value;
+    // Save current rows for the current hotel (if any)
+    if (selectedHotelId) {
+      setSavedRows((prev) => ({ ...prev, [selectedHotelId]: rows }));
+    }
+    setSelectedHotelId(newHotelId);
+    // Restore rows for the new hotel if they exist; otherwise, start with an empty array.
+    if (savedRows[newHotelId]) {
+      setRows(savedRows[newHotelId]);
+    } else {
+      setRows([]);
+    }
+  };
 
   const addRow = () => {
     setRows([...rows, { productId: '', tags: [] }]);
@@ -85,14 +103,14 @@ const UpsellProductSelector = () => {
     setRows(newRows);
   };
 
-  // Exclude upsell products that are already selected in other rows.
+  // Exclude upsell products that are already selected in other rows,
+  // but always include the product currently selected in the row.
   const availableUpsellProducts = (currentRowIndex) => {
     const selectedProductIds = rows
       .filter((_, idx) => idx !== currentRowIndex)
       .map((row) => row.productId)
       .filter(Boolean);
     return upsellProducts.filter((product) => {
-      // Always include the current row's selected product (if any).
       if (rows[currentRowIndex]?.productId === product.id) {
         return true;
       }
@@ -116,7 +134,7 @@ const UpsellProductSelector = () => {
           labelId="hotel-select-label"
           value={selectedHotelId}
           label="Hotel"
-          onChange={(e) => setSelectedHotelId(e.target.value)}
+          onChange={handleHotelChange}
         >
           <MenuItem value="">
             <em>None</em>
@@ -199,7 +217,7 @@ const UpsellProductSelector = () => {
                     label={tag}
                     onDelete={() => removeTag(index, tag)}
                     sx={{
-                      backgroundColor: 'lightgrey',
+                      backgroundColor: tagColors[tag] || 'grey',
                       color: 'grey'
                     }}
                   />
