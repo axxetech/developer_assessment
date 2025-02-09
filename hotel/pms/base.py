@@ -134,7 +134,7 @@ def get_pms(name: str) -> Type[PMSProvider]:
     """
     assert name.isalpha()
 
-    fullname = name.capitalize()
+    fullname = name.lower()
     # all new task managers should be included here
     base_module = "hotel.pms"
 
@@ -143,7 +143,7 @@ def get_pms(name: str) -> Type[PMSProvider]:
 
         for name, obj in inspect.getmembers(module, inspect.isclass):
             # Check if the class matches the name and inherits from TaskManagerProvider
-            if name == fullname and issubclass(obj, PMSProvider) and obj is not PMSProvider:
+            if name.lower() == fullname and issubclass(obj, PMSProvider) and obj is not PMSProvider:
                 return obj
 
     # Raise an error if no matching class is found

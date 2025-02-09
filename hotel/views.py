@@ -47,7 +47,7 @@ class HotelsListView(View):
                     'id': hotel.id,
                     'name': hotel.name,
                     'city': hotel.city,
-                    'pms': getattr(hotel, 'pms_name', ''),
+                    'pms': hotel.get_pms().name,
                 })
             return JsonResponse({'hotels': hotels_data})
         except Exception as e:

@@ -354,3 +354,223 @@ def get_apaleo_upsell_products():
         "count": 6
     }
     return upsell_products
+
+
+def get_guest_line_upsell_product():
+    upsell_products = {
+      "products": [
+        {
+          "id": "BER-BRKF",
+          "name": "Super Breakfast",
+          "code": "BRKF",
+          "description": "Enjoy fresh fruit, just-baked viennoiseries, or a hearty morning meal.",
+          "grossPrice": {
+            "amount": 50.0,
+            "currency": "EUR"
+          },
+          "unit": "Person",
+          "postNextDay": True,
+          "serviceType": "FoodAndBeverages",
+          "vat": "Normal",
+          "availability": {
+            "mode": "Daily",
+            "daysOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ]
+          },
+          "property": {
+            "id": "BER"
+          },
+          "channelCodes": [
+            "Direct",
+            "BookingCom",
+            "Ibe",
+            "ChannelManager"
+          ],
+          "ageCategory": "BER-ADULTS"
+        },
+        {
+          "id": "BER-BRKFK",
+          "name": "Super Breakfast child",
+          "code": "BRKFK",
+          "description": "Breakfast kids",
+          "grossPrice": {
+            "amount": 25.0,
+            "currency": "EUR"
+          },
+          "unit": "Person",
+          "postNextDay": True,
+          "serviceType": "FoodAndBeverages",
+          "vat": "Normal",
+          "availability": {
+            "mode": "Daily",
+            "daysOfWeek": [
+              "Sunday",
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday"
+            ]
+          },
+          "property": {
+            "id": "BER"
+          },
+          "channelCodes": [
+            "Direct",
+            "BookingCom",
+            "ChannelManager"
+          ],
+          "ageCategory": "BER-BRKK"
+        },
+        {
+          "id": "BER-BRKFT",
+          "name": "Super Breakfast Teen",
+          "code": "BRKFT",
+          "description": "Breakfast",
+          "grossPrice": {
+            "amount": 40.0,
+            "currency": "EUR"
+          },
+          "unit": "Person",
+          "postNextDay": True,
+          "serviceType": "FoodAndBeverages",
+          "vat": "Normal",
+          "availability": {
+            "mode": "Daily",
+            "daysOfWeek": [
+              "Sunday",
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday"
+            ]
+          },
+          "property": {
+            "id": "BER"
+          },
+          "channelCodes": [
+            "BookingCom",
+            "Direct",
+            "ChannelManager"
+          ],
+          "ageCategory": "BER-BRKT"
+        },
+        {
+          "id": "BER-CLEANING",
+          "name": "Final cleaning",
+          "code": "CLEANING",
+          "description": "Final cleaning.",
+          "grossPrice": {
+            "amount": 30.0,
+            "currency": "EUR"
+          },
+          "unit": "Person",
+          "postNextDay": True,
+          "serviceType": "Other",
+          "vat": "Normal",
+          "availability": {
+            "mode": "Departure",
+            "daysOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ]
+          },
+          "property": {
+            "id": "BER"
+          },
+          "channelCodes": [
+            "Direct",
+            "BookingCom",
+            "Ibe",
+            "ChannelManager"
+          ]
+        },
+        {
+          "id": "BER-DRINK",
+          "name": "Welcome drink",
+          "code": "DRINK",
+          "description": "Enjoy a welcome drink at our bar on arrival.",
+          "grossPrice": {
+            "amount": 7.5,
+            "currency": "EUR"
+          },
+          "unit": "Person",
+          "postNextDay": False,
+          "serviceType": "FoodAndBeverages",
+          "vat": "Normal",
+          "availability": {
+            "mode": "Arrival",
+            "daysOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ]
+          },
+          "property": {
+            "id": "BER"
+          },
+          "channelCodes": [
+            "Direct",
+            "BookingCom",
+            "Ibe",
+            "ChannelManager"
+          ]
+        },
+        {
+          "id": "BER-WLAN",
+          "name": "High-Speed WLAN",
+          "code": "WLAN",
+          "description": "Upgrade the complimentary internet access to a high speed connection.",
+          "grossPrice": {
+            "amount": 5.0,
+            "currency": "EUR"
+          },
+          "unit": "Room",
+          "postNextDay": False,
+          "serviceType": "Other",
+          "vat": "Normal",
+          "availability": {
+            "mode": "Daily",
+            "daysOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ]
+          },
+          "property": {
+            "id": "BER"
+          },
+          "channelCodes": [
+            "Direct",
+            "BookingCom",
+            "Ibe",
+            "ChannelManager"
+          ]
+        }
+      ],
+      "count": 6
+    }
+    return upsell_products

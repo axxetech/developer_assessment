@@ -80,7 +80,7 @@ const UpsellProductSelector = () => {
         <option value="">-- Select a Hotel --</option>
         {hotels.map((hotel) => (
           <option key={hotel.id} value={hotel.id}>
-            {hotel.name} - {hotel.city} ({hotel.pms})
+            {hotel.name} - {hotel.city} ({hotel.pms}) test
           </option>
         ))}
       </select>

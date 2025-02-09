@@ -17,6 +17,7 @@ class Language(models.TextChoices):
 class Hotel(models.Model):
     class PMS(models.TextChoices):
         APALEO = "Apaleo", "Apaleo PMS"
+        GUESTLINE = "Guestline", "Guestline PMS"
 
     name = models.CharField(max_length=200)
     city = models.CharField(max_length=200, blank=False, null=False)
