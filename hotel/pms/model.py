@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 class UpsellProduct(BaseModel):
     id: str
     name: str
-    codes: str
+    code: str
     description: str
     price: str
     age_category: str
