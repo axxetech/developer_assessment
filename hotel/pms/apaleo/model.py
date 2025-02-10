@@ -12,6 +12,16 @@ class ApaleoUpsellProductAdapter(UpsellProductAdapter):
         amount = default_price.get("amount")
         currency = default_price.get("currency")
         price_str = f"{amount} {currency}"
+
+        # Manually build the dictionary
+        product_dict = {}
+        product_dict["id"] = self.raw_data.get("id", "")
+        product_dict["name"] = self.raw_data.get("name", "")
+        product_dict["code"] = self.raw_data.get("code", "")
+        product_dict["description"] = self.raw_data.get("description", "")
+        product_dict["price"] = price_str
+        product_dict["age_category"] = self.raw_data.get("ageCategoryId", "")
+
         return UpsellProduct(
             id=self.raw_data.get("id"),
             name=self.raw_data.get("name"),

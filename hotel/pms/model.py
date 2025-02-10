@@ -9,16 +9,17 @@ logger = logging.getLogger(__name__)
 class UpsellProduct(BaseModel):
     id: str
     name: str
-    code: str
+    codes: str
     description: str
     price: str
     age_category: str
 
-    def must_not_be_empty(cls, v, field):
-        logger.debug(f"Validating field '{field.name}' with value: {v!r}")
-        if not v or not v.strip():
-            raise ValueError(f"'{field.name}' must not be empty")
-        return v
+    # @field_validator('name', mode='before')
+    # @classmethod
+    # def check_name_contains_alex(cls, v):
+    #     if 'alex' not in v.lower():
+    #         raise ValueError("The 'name' field must contain 'alex'")
+    #     return v
 
 
 # --- Adapter Base Class ---
